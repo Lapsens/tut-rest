@@ -43,6 +43,11 @@ class EmployeeController {
 	}
 	// end::get-aggregate-root[]
 
+	@GetMapping("/api/v1/employees/count")
+	Long count() {
+		return repository.count();
+	}
+
 	@PostMapping("/employees")
 	Employee newEmployee(@RequestBody Employee newEmployee) {
 		return repository.save(newEmployee);
