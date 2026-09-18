@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 class EmployeeController {
 
 	private final EmployeeRepository repository;
+	private final EmployeeQueryService queryService;
 
-	EmployeeController(EmployeeRepository repository) {
+	EmployeeController(EmployeeRepository repository, EmployeeQueryService queryService) {
 		this.repository = repository;
+		this.queryService = queryService;
 	}
 
 	// Aggregate root
@@ -33,7 +35,7 @@ class EmployeeController {
 	@GetMapping("/employees")
 	CollectionModel<EntityModel<Employee>> all() {
 
-		List<EntityModel<Employee>> employees = repository.findAll().stream()
+		List<EntityModel<Employee>> employees = queryService.findAll().stream()
 				.map(employee -> EntityModel.of(employee,
 						linkTo(methodOn(EmployeeController.class).one(employee.getId())).withSelfRel(),
 						linkTo(methodOn(EmployeeController.class).all()).withRel("employees")))
@@ -45,7 +47,7 @@ class EmployeeController {
 
 	@GetMapping("/api/v1/employees/count")
 	Long count() {
-		return repository.count();
+		return queryService.count();
 	}
 
 	@PostMapping("/employees")
@@ -59,7 +61,7 @@ class EmployeeController {
 	@GetMapping("/employees/{id}")
 	EntityModel<Employee> one(@PathVariable Long id) {
 
-		Employee employee = repository.findById(id) //
+		Employee employee = queryService.findById(id) //
 				.orElseThrow(() -> new EmployeeNotFoundException(id));
 
 		return EntityModel.of(employee, //
