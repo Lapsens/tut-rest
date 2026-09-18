@@ -4,8 +4,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(EmployeeController.class)
 class EmployeeCountControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -23,13 +21,46 @@ class EmployeeCountControllerTest {
     private EmployeeRepository repository;
 
     @Test
-    void shouldReturnCorrectCount() throws Exception {
-        // Arrange
-        when(repository.count()).thenReturn(2L);
-        
-        // Act & Assert
-        mockMvc.perform(get("/api/v1/employees/count"))
+    void getEmployeeById() throws Exception {
+        Employee employee = new Employee();
+        employee.setId(1L);
+        employee.setName("John Doe");
+        employee.setRole("Developer");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+
+        mockMvc.perform(get("/employees/1"))
                .andExpect(status().isOk())
-               .andExpect(content().string("2"));
+               .andExpect(jsonPath(".name").value("John Doe"));
+    }
+
+    @Test
+    void getEmployeeByIdNotFound() throws Exception {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/employees/1"))
+               .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getEmployeeByIdV1() throws Exception {
+        Employee employee = new Employee();
+        employee.setId(1L);
+        employee.setName("John Doe");
+        employee.setRole("Developer");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+
+        mockMvc.perform(get("/api/v1/employees/1"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath(".name").value("John Doe"));
+    }
+
+    @Test
+    void getEmployeeByIdV1NotFound() throws Exception {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/v1/employees/1"))
+               .andExpect(status().isNotFound());
     }
 }

@@ -56,7 +56,7 @@ class EmployeeController {
 	// Single item
 
 	// tag::get-single-item[]
-	@GetMapping("/employees/{id}")
+	@GetMapping({"/employees/{id}", "/api/v1/employees/{id}"})
 	EntityModel<Employee> one(@PathVariable Long id) {
 
 		Employee employee = repository.findById(id) //
