@@ -30,8 +30,15 @@ class Employee {
 	}
 
 	public String getRole() {
-		return this.role;
-	}
+	        return this.role;
+	    }
+	
+	    boolean hasRole(String role) {
+	        if (this.role == null) {
+	            return role == null;
+	        }
+	        return this.role.equals(role);
+	    }
 
 	public void setId(Long id) {
 		this.id = id;
