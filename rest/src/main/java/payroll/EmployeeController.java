@@ -43,6 +43,13 @@ class EmployeeController {
 	}
 	// end::get-aggregate-root[]
 
+	@GetMapping("/api/v1/employees/roles/{role}")
+	List<Employee> byRole(@PathVariable String role) {
+		return repository.findAll().stream()
+				.filter(employee -> role.equals(employee.getRole()))
+				.collect(Collectors.toList());
+	}
+
 	@PostMapping("/employees")
 	Employee newEmployee(@RequestBody Employee newEmployee) {
 		return repository.save(newEmployee);
