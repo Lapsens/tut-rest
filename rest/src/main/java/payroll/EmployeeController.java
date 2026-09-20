@@ -50,6 +50,13 @@ class EmployeeController {
 				.collect(Collectors.toList());
 	}
 
+	@GetMapping("/api/v1/employees/names")
+	List<String> names() {
+		return repository.findAll().stream()
+				.map(Employee::getName)
+				.collect(Collectors.toList());
+	}
+
 	@PostMapping("/employees")
 	Employee newEmployee(@RequestBody Employee newEmployee) {
 		return repository.save(newEmployee);
